@@ -1,10 +1,15 @@
+// lib/api.ts
 import axios from 'axios';
 import type { NotesResponse, Note } from '@/types/note';
 
-const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const isBrowser = typeof window !== 'undefined';
+
+const baseURL = isBrowser
+  ? '/api' // клієнт використовує proxy rewrite
+  : process.env.NEXT_PUBLIC_API_BASE_URL;
 
 if (!baseURL) {
-  throw new Error('NEXT_PUBLIC_API_BASE_URL is not defined');
+  throw new Error('API baseURL is not defined');
 }
 
 const axiosInstance = axios.create({
@@ -19,12 +24,8 @@ export const fetchNotes = async (): Promise<NotesResponse> => {
   const data = response.data;
   console.log('fetchNotes data:', data);
 
-  if (Array.isArray(data)) {
-    return { results: data };
-  }
-
   return {
-    results: Array.isArray(data.notes) ? data.notes : [],
+    results: Array.isArray(data) ? data : Array.isArray(data.notes) ? data.notes : [],
   };
 };
 
