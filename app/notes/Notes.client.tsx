@@ -12,7 +12,7 @@ type Props = {
 };
 
 export default function NotesClient({ initialNotes }: Props) {
-  const { data = initialNotes, isLoading, error } = useQuery({
+  const { data = initialNotes, isLoading, error } = useQuery<NotesResponse>({
     queryKey: ['notes'],
     queryFn: fetchNotes,
     initialData: initialNotes,
@@ -24,7 +24,7 @@ export default function NotesClient({ initialNotes }: Props) {
   return (
     <main className={styles.container}>
       <NoteForm />
-      <NoteList notes={Array.isArray(data?.results) ? data.results : []} />
+      <NoteList notes={data.notes} />
     </main>
   );
 }

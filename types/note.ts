@@ -1,11 +1,12 @@
-export type Note = {
-  id: string;
+export interface Note {
+  id: number;
   title: string;
   content: string;
-  tag: string;
   createdAt: string;
-};
+  tag: string; 
 
-export type NotesResponse = {
-  results: Note[];
-};
+}
+
+export interface NotesResponse {
+  notes: Note[];
+}
