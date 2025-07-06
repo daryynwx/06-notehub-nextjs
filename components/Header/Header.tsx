@@ -6,9 +6,9 @@ import styles from './Header.module.css';
 export default function Header() {
   return (
     <header className={styles.header}>
-      <a href="/" aria-label="Home" className={styles.logo}>
-        NoteHub
-      </a>
+     <Link href="/" aria-label="Home" className={styles.logo}>
+  NoteHub
+</Link>
       <nav aria-label="Main Navigation">
         <ul className={styles.navigation}>
           <li>
