@@ -1,37 +1,45 @@
 'use client';
+
 import { useState } from 'react';
 import styles from './NoteForm.module.css';
+import NoteModal from '@/components/NoteModal/NoteModal';
 
 export default function NoteForm() {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: handle note creation
-    console.log({ title, content });
-    setTitle('');
-    setContent('');
-  };
+  const openModal = () => setIsOpen(true);
+  const closeModal = () => setIsOpen(false);
 
   return (
-    <form onSubmit={handleSubmit} className={styles.form}>
-      <input
-        type="text"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="Note title"
-        className={styles.input}
-        required
-      />
-      <textarea
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        placeholder="Note content"
-        className={styles.textarea}
-        required
-      />
-      <button type="submit" className={styles.button}>Create Note</button>
-    </form>
+    <>
+      <button className={styles.createBtn} onClick={openModal}>
+        Create Note
+      </button>
+
+      {isOpen && (
+        <NoteModal onClose={closeModal}>
+          <h2>Create Note</h2>
+          <form className={styles.form}>
+            <input
+              type="text"
+              placeholder="Title"
+              className={styles.input}
+            />
+            <textarea
+              placeholder="Content"
+              className={styles.textarea}
+            ></textarea>
+            <div className={styles.actions}>
+              <button type="submit" className={styles.submitBtn}>
+                Create
+              </button>
+              <button type="button" onClick={closeModal} className={styles.closeBtn}>
+                Cancel
+              </button>
+            </div>
+          </form>
+        </NoteModal>
+      )}
+    </>
   );
 }
