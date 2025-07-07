@@ -1,4 +1,3 @@
-// components/NoteForm/NoteForm.tsx
 'use client';
 
 import { useState } from 'react';
