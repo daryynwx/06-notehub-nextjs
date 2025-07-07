@@ -8,7 +8,7 @@ import styles from './NoteDetails.module.css';
 
 export default function NoteDetailsClient() {
   const { id } = useParams();
-  const router = useRouter();
+
   const noteId = Number(id);
 
   const { data: note, isLoading, error } = useQuery({
