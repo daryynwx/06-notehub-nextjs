@@ -8,7 +8,7 @@ type Props = {
 };
 
 export default function TanStackProvider({ children }: Props) {
-  // Створюємо клієнт один раз для уникнення повторної ініціалізації
+
   const [queryClient] = useState(() => new QueryClient());
 
   return (

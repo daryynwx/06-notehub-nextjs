@@ -24,3 +24,12 @@ export const fetchNoteById = async (id: number): Promise<Note> => {
 
   return data;
 };
+
+export const deleteNote = async (id: number): Promise<void> => {
+  await axios.delete(`${API_BASE}/notes/${id}`, {
+    headers: {
+      Authorization: `Bearer ${TOKEN}`,
+    },
+  });
+};
+

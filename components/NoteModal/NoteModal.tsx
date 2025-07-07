@@ -1,3 +1,4 @@
+// components/NoteModal/NoteModal.tsx
 'use client';
 
 import { useEffect } from 'react';
@@ -19,7 +20,7 @@ export default function NoteModal({ onClose, children }: Props) {
   }, [onClose]);
 
   return createPortal(
-    <div className={styles.overlay} onClick={onClose}>
+    <div className={styles.backdrop} onClick={onClose}>
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
         {children}
       </div>

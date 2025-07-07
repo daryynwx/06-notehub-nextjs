@@ -1,3 +1,4 @@
+// components/Pagination/Pagination.tsx
 'use client';
 
 import ReactPaginate from 'react-paginate';
@@ -17,11 +18,8 @@ export default function Pagination({ pageCount, onPageChange }: Props) {
       pageRangeDisplayed={3}
       pageCount={pageCount}
       previousLabel="<"
-      containerClassName={styles.container}
+      containerClassName={styles.pagination}
       activeClassName={styles.active}
-      pageClassName={styles.page}
-      previousClassName={styles.arrow}
-      nextClassName={styles.arrow}
     />
   );
 }
