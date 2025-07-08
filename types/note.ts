@@ -3,10 +3,10 @@ export interface Note {
   title: string;
   content: string;
   createdAt: string;
-  tag: string; 
-
+  tag: string;
 }
 
 export interface NotesResponse {
   notes: Note[];
+  totalPages: number; 
 }

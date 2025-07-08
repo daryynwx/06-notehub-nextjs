@@ -1,8 +1,9 @@
-import { fetchNotes } from "@/lib/api";
-import NotesClient from "./Notes.client";
+// app/notes/page.tsx
+import { fetchNotes } from '@/lib/api';
+import NotesClient from './Notes.client';
 
 export default async function NotesPage() {
-  const notes = await fetchNotes();
+  const initialData = await fetchNotes(1);
 
-  return <NotesClient initialNotes={notes} />;
+  return <NotesClient initialData={initialData} />;
 }

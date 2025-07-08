@@ -1,58 +1,38 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { fetchNoteById, updateNoteById } from '@/lib/api';
-import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
+import { fetchNoteById } from '@/lib/api';
+import Link from 'next/link';
+import styles from './NoteDetails.module.css';
 
-export default function EditNotePage() {
+export default function NoteDetailsClient() {
   const { id } = useParams();
   const noteId = Number(id);
-  const router = useRouter();
 
-  const { data: note, isLoading } = useQuery({
+  const { data: note, isLoading, error } = useQuery({
     queryKey: ['note', noteId],
     queryFn: () => fetchNoteById(noteId),
   });
 
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-
-  // Когда данные загружены, заполняем форму
-  useEffect(() => {
-    if (note) {
-      setTitle(note.title);
-      setContent(note.content);
-    }
-  }, [note]);
-
-  // Мутация на обновление
-  const mutation = useMutation({
-    mutationFn: () => updateNoteById(noteId, { title, content }),
-    onSuccess: () => {
-      router.push(`/notes/${noteId}`); // редирект обратно
-    },
-    onError: (error) => {
-      console.error('Failed to update:', error);
-    },
-  });
-
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <p>Loading, please wait...</p>;
+  if (error || !note) return <p>Something went wrong.</p>;
 
   return (
-    <div>
-      <h1>Edit Note #{noteId}</h1>
-      <label>
-        Title:
-        <input value={title} onChange={(e) => setTitle(e.target.value)} />
-      </label>
-      <br />
-      <label>
-        Content:
-        <textarea value={content} onChange={(e) => setContent(e.target.value)} />
-      </label>
-      <br />
-      <button onClick={() => mutation.mutate()}>Save</button>
+    <div className={styles.container}>
+      <div className={styles.item}>
+        <div className={styles.header}>
+          <h2>{note.title}</h2>
+          <span className={styles.tag}>{note.tag}</span> {/* 👈 Показываем тег */}
+        </div>
+        <p className={styles.content}>{note.content}</p>
+        <p className={styles.date}>{new Date(note.createdAt).toLocaleString()}</p>
+        <div className={styles.actions}>
+          <Link href={`/notes/${note.id}/edit`} className={styles.editBtn}>
+            Edit card
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

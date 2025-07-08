@@ -14,12 +14,18 @@ export default function Pagination({ pageCount, onPageChange }: Props) {
     <ReactPaginate
       breakLabel="..."
       nextLabel=">"
-      onPageChange={onPageChange}
-      pageRangeDisplayed={3}
-      pageCount={pageCount}
       previousLabel="<"
+      onPageChange={onPageChange}
+      pageRangeDisplayed={2}
+      marginPagesDisplayed={1}
+      pageCount={pageCount}
       containerClassName={styles.pagination}
       activeClassName={styles.active}
+      pageClassName={styles.page}
+      previousClassName={styles.page}
+      nextClassName={styles.page}
+      breakClassName={styles.page}
+      disabledClassName={styles.disabled}
     />
   );
 }
