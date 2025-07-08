@@ -3,12 +3,12 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { fetchNoteById, updateNoteById } from '@/lib/api';
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function EditNotePage() {
   const { id } = useParams();
-  const noteId = Number(id);
   const router = useRouter();
+  const noteId = Number(id);
 
   const { data: note, isLoading } = useQuery({
     queryKey: ['note', noteId],
@@ -18,7 +18,6 @@ export default function EditNotePage() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
 
-  // Когда данные загружены, заполняем форму
   useEffect(() => {
     if (note) {
       setTitle(note.title);
@@ -26,15 +25,9 @@ export default function EditNotePage() {
     }
   }, [note]);
 
-  // Мутация на обновление
   const mutation = useMutation({
     mutationFn: () => updateNoteById(noteId, { title, content }),
-    onSuccess: () => {
-      router.push(`/notes/${noteId}`); // редирект обратно
-    },
-    onError: (error) => {
-      console.error('Failed to update:', error);
-    },
+    onSuccess: () => router.push(`/notes/${noteId}`),
   });
 
   if (isLoading) return <p>Loading...</p>;
@@ -42,15 +35,18 @@ export default function EditNotePage() {
   return (
     <div>
       <h1>Edit Note #{noteId}</h1>
-      <label>
-        Title:
-        <input value={title} onChange={(e) => setTitle(e.target.value)} />
-      </label>
+      <input
+        type="text"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        placeholder="Title"
+      />
       <br />
-      <label>
-        Content:
-        <textarea value={content} onChange={(e) => setContent(e.target.value)} />
-      </label>
+      <textarea
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        placeholder="Content"
+      />
       <br />
       <button onClick={() => mutation.mutate()}>Save</button>
     </div>

@@ -2,6 +2,20 @@
 import axios from 'axios';
 import { NotesResponse, Note } from '@/types/note';
 
+export async function updateNoteById(
+  id: number,
+  data: { title: string; content: string }
+): Promise<Note> {
+  const response = await axios.patch(`${API_BASE}/notes/${id}`, data, {
+    headers: {
+      Authorization: `Bearer ${TOKEN}`,
+    },
+  });
+
+  return response.data;
+};
+
+
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 const TOKEN = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN;
 
