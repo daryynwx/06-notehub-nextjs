@@ -1,11 +1,12 @@
-// app/layout.tsx
+// ✅ app/layout.tsx
+
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 
 import Header from '@/components/Header/Header';
+import Footer from '@/components/Footer/Footer';
 import TanStackProvider from '@/components/TanStackProvider/TanStackProvider';
-
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -22,8 +23,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Header />
-        <TanStackProvider>{children}</TanStackProvider>
+        <TanStackProvider>
+          <Header />
+          <main>{children}</main>
+          <Footer />
+        </TanStackProvider>
       </body>
     </html>
   );

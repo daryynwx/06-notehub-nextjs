@@ -1,39 +1,51 @@
+
 import axios from 'axios';
-import { NotesResponse, Note } from '@/types/note';
+import { Note } from '@/types/note';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
-const TOKEN = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN;
-
-export const fetchNotes = async (page = 1): Promise<NotesResponse> => {
-  const { data } = await axios.get<NotesResponse>(
-    `${API_BASE}/notes?page=${page}`,
-    {
-      headers: {
-        Authorization: `Bearer ${TOKEN}`,
-      },
-    }
-  );
+export const updateNoteById = async (
+  id: number,
+  note: {
+    title: string;
+    content: string;
+    tag: string;
+  }
+) => {
+  const { data } = await axios.put(`${API_BASE}/notes/${id}`, note, {
+    headers: {
+      Authorization: `Bearer ${TOKEN}`,
+    },
+  });
 
   return data;
 };
 
 
 
-export async function updateNoteById(
-  id: number,
-  data: { title: string; content: string }
-): Promise<Note> {
-  const response = await axios.patch(`${API_BASE}/notes/${id}`, data, {
+export interface NotesResponse {
+  notes: Note[];
+  totalPages: number;
+}
+
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
+const TOKEN = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN;
+
+export const fetchNotes = async (
+  page = 1,
+  query = ''
+): Promise<NotesResponse> => {
+  const searchParam = query ? `&search=${encodeURIComponent(query)}` : '';
+  const url = `${API_BASE}/notes?page=${page}${searchParam}`;
+
+  console.log('➡️ Fetch URL:', url);
+
+  const { data } = await axios.get<NotesResponse>(url, {
     headers: {
       Authorization: `Bearer ${TOKEN}`,
     },
   });
 
-  return response.data;
+  return data;
 };
-
-
-
 
 
 
@@ -47,11 +59,28 @@ export const fetchNoteById = async (id: number): Promise<Note> => {
   return data;
 };
 
-export const deleteNote = async (id: number): Promise<void> => {
-  await axios.delete(`${API_BASE}/notes/${id}`, {
+
+export const deleteNote = async (id: number): Promise<Note> => {
+  const { data } = await axios.delete<Note>(`${API_BASE}/notes/${id}`, {
     headers: {
       Authorization: `Bearer ${TOKEN}`,
     },
   });
+
+  return data;
 };
 
+
+export const createNote = async (note: {
+  title: string;
+  content: string;
+  tag: string;
+}): Promise<Note> => {
+  const { data } = await axios.post<Note>(`${API_BASE}/notes`, note, {
+    headers: {
+      Authorization: `Bearer ${TOKEN}`,
+    },
+  });
+
+  return data;
+};

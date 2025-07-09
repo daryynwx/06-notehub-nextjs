@@ -1,27 +1,38 @@
 'use client';
 
-import { useState } from 'react';
-import styles from './NoteForm.module.css';
-import NoteModal from '@/components/NoteModal/NoteModal';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import styles from './NoteForm.module.css';
+
+interface NoteFormProps {
+  onSuccess: () => void;
+}
+
+interface NoteFormValues {
+  title: string;
+  content: string;
+  tag: string;
+}
+
+const validationSchema = Yup.object({
+  title: Yup.string().required('Title is required'),
+  content: Yup.string(), // Optional
+  tag: Yup.string().required('Tag is required'),
+});
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 const TOKEN = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN;
 
-export default function NoteForm() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [tag, setTag] = useState('Todo');
-
+export default function NoteForm({ onSuccess }: NoteFormProps) {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (values: NoteFormValues) => {
       await axios.post(
         `${API_BASE}/notes`,
-        { title, content, tag },
+        values,
         {
           headers: {
             Authorization: `Bearer ${TOKEN}`,
@@ -31,82 +42,60 @@ export default function NoteForm() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
-      closeModal();
-      setTitle('');
-      setContent('');
-      setTag('Todo');
+      onSuccess();
     },
   });
 
-  const openModal = () => setIsOpen(true);
-  const closeModal = () => setIsOpen(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    mutation.mutate();
+  const initialValues: NoteFormValues = {
+    title: '',
+    content: '',
+    tag: 'Todo',
   };
 
   return (
-    <>
-      <button className={styles.submitButton} onClick={openModal}>
-        Create Note +
-      </button>
+    <div>
+      <h2 className={styles.title}>Create Note</h2>
 
-      {isOpen && (
-        <NoteModal onClose={closeModal}>
-          <h2 className={styles.title}>Create Note</h2>
-          <form className={styles.form} onSubmit={handleSubmit}>
-            <div className={styles.formGroup}>
-              <label>Title</label>
-              <input
-                type="text"
-                value={title}
-                onChange={e => setTitle(e.target.value)}
-                className={styles.input}
-                required
-              />
-            </div>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={(values: NoteFormValues, { resetForm }: any) => {
+          mutation.mutate(values);
+          resetForm();
+        }}
+      >
+        <Form className={styles.form}>
+          <div className={styles.formGroup}>
+            <label htmlFor="title">Title</label>
+            <Field name="title" type="text" className={styles.input} />
+            <ErrorMessage name="title" component="div" className={styles.error} />
+          </div>
 
-            <div className={styles.formGroup}>
-              <label>Content</label>
-              <textarea
-                value={content}
-                onChange={e => setContent(e.target.value)}
-                className={styles.textarea}
-                required
-              ></textarea>
-            </div>
+          <div className={styles.formGroup}>
+            <label htmlFor="content">Content</label>
+            <Field as="textarea" name="content" className={styles.textarea} />
+            <ErrorMessage name="content" component="div" className={styles.error} />
+          </div>
 
-            <div className={styles.formGroup}>
-              <label>Tag</label>
-              <select
-                value={tag}
-                onChange={e => setTag(e.target.value)}
-                className={styles.select}
-              >
-                <option value="Todo">Todo</option>
-                <option value="Work">Work</option>
-                <option value="Personal">Personal</option>
-                <option value="Meeting">Meeting</option>
-                <option value="Shopping">Shopping</option>
-              </select>
-            </div>
+          <div className={styles.formGroup}>
+            <label htmlFor="tag">Tag</label>
+            <Field as="select" name="tag" className={styles.select}>
+              <option value="Todo">Todo</option>
+              <option value="Work">Work</option>
+              <option value="Personal">Personal</option>
+              <option value="Meeting">Meeting</option>
+              <option value="Shopping">Shopping</option>
+            </Field>
+            <ErrorMessage name="tag" component="div" className={styles.error} />
+          </div>
 
-            <div className={styles.actions}>
-              <button type="submit" className={styles.submitButton}>
-                Create Note
-              </button>
-              <button
-                type="button"
-                onClick={closeModal}
-                className={styles.cancelButton}
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </NoteModal>
-      )}
-    </>
+          <div className={styles.actions}>
+            <button type="submit" className={styles.submitButton} disabled={mutation.isPending}>
+              {mutation.isPending ? 'Creating...' : 'Create Note'}
+            </button>
+          </div>
+        </Form>
+      </Formik>
+    </div>
   );
 }

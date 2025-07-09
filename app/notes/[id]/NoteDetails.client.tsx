@@ -13,6 +13,7 @@ export default function NoteDetailsClient() {
   const { data: note, isLoading, error } = useQuery({
     queryKey: ['note', noteId],
     queryFn: () => fetchNoteById(noteId),
+    refetchOnMount: false, // 👈 обязательное требование ТЗ
   });
 
   if (isLoading) return <p>Loading, please wait...</p>;
@@ -23,7 +24,7 @@ export default function NoteDetailsClient() {
       <div className={styles.item}>
         <div className={styles.header}>
           <h2>{note.title}</h2>
-          <span className={styles.tag}>{note.tag}</span> {/* 👈 Показываем тег */}
+          <span className={styles.tag}>{note.tag}</span>
         </div>
         <p className={styles.content}>{note.content}</p>
         <p className={styles.date}>{new Date(note.createdAt).toLocaleString()}</p>
