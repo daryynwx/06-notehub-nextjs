@@ -1,6 +1,6 @@
 'use client';
 
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Formik, Form, Field, ErrorMessage, type FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
@@ -30,15 +30,11 @@ export default function NoteForm({ onSuccess }: NoteFormProps) {
 
   const mutation = useMutation({
     mutationFn: async (values: NoteFormValues) => {
-      await axios.post(
-        `${API_BASE}/notes`,
-        values,
-        {
-          headers: {
-            Authorization: `Bearer ${TOKEN}`,
-          },
-        }
-      );
+      await axios.post(`${API_BASE}/notes`, values, {
+        headers: {
+          Authorization: `Bearer ${TOKEN}`,
+        },
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
@@ -59,7 +55,10 @@ export default function NoteForm({ onSuccess }: NoteFormProps) {
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
-        onSubmit={(values: NoteFormValues, { resetForm }: any) => {
+        onSubmit={(
+          values: NoteFormValues,
+          { resetForm }: FormikHelpers<NoteFormValues>
+        ) => {
           mutation.mutate(values);
           resetForm();
         }}
