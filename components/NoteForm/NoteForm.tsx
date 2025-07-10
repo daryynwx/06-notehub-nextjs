@@ -89,8 +89,21 @@ export default function NoteForm({ onSuccess }: NoteFormProps) {
           </div>
 
           <div className={styles.actions}>
-            <button type="submit" className={styles.submitButton} disabled={mutation.isPending}>
+            <button
+              type="submit"
+              className={styles.submitButton}
+              disabled={mutation.isPending}
+            >
               {mutation.isPending ? 'Creating...' : 'Create Note'}
+            </button>
+
+          
+            <button
+              type="button"
+              className={styles.cancelButton}
+              onClick={onSuccess}
+            >
+              Cancel
             </button>
           </div>
         </Form>

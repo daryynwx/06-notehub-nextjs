@@ -1,16 +1,15 @@
-// components/NoteModal/NoteModal.tsx
 'use client';
 
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import styles from './NoteModal.module.css';
 
-interface Props {
+interface NoteModalProps {
   onClose: () => void;
   children: React.ReactNode;
 }
 
-export default function NoteModal({ onClose, children }: Props) {
+export default function NoteModal({ onClose, children }: NoteModalProps) {
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -21,7 +20,7 @@ export default function NoteModal({ onClose, children }: Props) {
 
   return createPortal(
     <div className={styles.backdrop} onClick={onClose}>
-      <div className={styles.modal} onClick={e => e.stopPropagation()}>
+      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         {children}
       </div>
     </div>,

@@ -2,22 +2,6 @@
 import axios from 'axios';
 import { Note } from '@/types/note';
 
-export const updateNoteById = async (
-  id: number,
-  note: {
-    title: string;
-    content: string;
-    tag: string;
-  }
-) => {
-  const { data } = await axios.put(`${API_BASE}/notes/${id}`, note, {
-    headers: {
-      Authorization: `Bearer ${TOKEN}`,
-    },
-  });
-
-  return data;
-};
 
 
 
