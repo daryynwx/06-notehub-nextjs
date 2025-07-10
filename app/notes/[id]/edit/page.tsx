@@ -26,7 +26,10 @@ export default function EditNotePage() {
   }, [note]);
 
   const mutation = useMutation({
-    mutationFn: () => updateNoteById(noteId, { title, content }),
+    mutationFn: () => updateNoteById(noteId, {
+      title, content,
+      tag: ''
+    }),
     onSuccess: () => router.push(`/notes/${noteId}`),
   });
 
